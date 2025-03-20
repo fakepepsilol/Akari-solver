@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
-#include <regex>
 #include <sstream>
 #include <string>
 inline int _stoi(std::string in) {
@@ -13,26 +12,47 @@ inline int _stoi(std::string in) {
 	return ret;
 }
 Level CurlToLevel(std::string in) {
-	std::regex  pattern("'(\\d{1,2})\\|(\\d{1,2})\\|(.+)'");
-	std::smatch match;
-	std::regex_search(in, match, pattern);
-	if (match.empty()) {
+	if (in.find("ggSDK.embed(") == -1) {
 		std::cerr << "Failed to read request. (wrong url?)";
 		exit(1);
 	}
-	std::string js      = match.str(3);
-	const char* js_cstr = js.c_str();
-
-	int x = _stoi(match.str(1));
-	int y = _stoi(match.str(2));
-	printf("x: %d\ny: %d\n", x, y);
-	char* grid = new char[(x + 2) * (y + 2) + 1]();
-	memset(grid, '#', (x + 2) * (y + 2));
-	Level level(grid, x + 2, y + 2);
-	for (int Y = 0; Y < y; Y++) {
-		memcpy(&grid[(Y + 1) * level.x + 1], &js_cstr[Y * x], x);
+	in = in.substr(in.find("ggSDK.embed("));
+	in = in.substr(0, in.find('\n') - 3);
+	for (int i = in.length() - 2; i > 0; i--) {
+		if (in[i] == '\'') {
+			in = in.substr(i);
+			break;
+		}
 	}
-	level.fixEdge();
 
+
+	std::string xStr;
+	std::string yStr;
+
+	bool first = true;
+	for (int i = 1; i < in.length() - 1; i++) {
+		if (in[i] == '|') {
+			if (!first) { break; }
+			first = false;
+			continue;
+		}
+		(first ? xStr : yStr) += in[i];
+	}
+
+
+	in = in.substr(xStr.length() + yStr.length() + 3);
+	in = in.substr(0, in.length() - 1);
+
+
+	int x = _stoi(xStr);
+	int y = _stoi(yStr);
+
+	int   gridSize = (x + 2) * (y + 2);
+	char* grid     = new char[gridSize + 1]();
+	memset(grid, '#', gridSize);
+	for (int Y = 0; Y < y; Y++) {
+		memcpy(&grid[(Y + 1) * (x + 2) + 1], &in[Y * x], x);
+	}
+	Level level(grid, x + 2, y + 2);
 	return level;
 }
