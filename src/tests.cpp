@@ -3,16 +3,19 @@
 
 #include <cstdio>
 // #include <utility>
+#include <cstring>
 #include <vector>
 
 
 bool _test_getNeighbors();
+bool _test_fixEdge();
 
 int  testNumber = 1;
 bool beginTests() {
 	bool status = true;
 
 	status &= _test_getNeighbors();
+	status &= _test_fixEdge();
 
 
 	return status;
@@ -63,7 +66,27 @@ bool _test_getNeighbors() {
 			result = false;
 		}
 	}
-	printf("%s end\n", "_test_getNeighbors");
+	printf("%s end\n", __func__);
+	testNumber++;
+	return result;
+}
+bool _test_fixEdge() {
+	printf("%s begin\n", __func__);
+	char* grid = new char[7 * 6 + 1]();
+	memset(grid, '3', 7 * 6);
+	Level level(grid, 7, 6);
+	level.fixEdge();
+	const char* expected =
+			"#######"
+			"#33333#"
+			"#33333#"
+			"#33333#"
+			"#33333#"
+			"#######";
+	bool result = true;
+	if (memcmp(grid, expected, 7 * 6)) { result = false; }
+	printf("%d-0 -> %s\n", testNumber, (result ? "✅" : "❌"));
+	printf("%s end\n", __func__);
 	testNumber++;
 	return result;
 }
