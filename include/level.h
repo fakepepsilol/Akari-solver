@@ -9,9 +9,16 @@ public:
 	int   x;
 	int   y;
 	char* grid;
-	void  print(bool noDots = false);
-	void  fixEdge();
-	int   getNeighbors(Position, const char* targets);
-	void  trivialSolve();
+	// src/level.cpp
+	void print(bool noDots = false);
+	void fixEdge();
+
+	Positions getNeighbors(Position, const char* targets);
+	int       getNeighborCnt(Position, const char* targets);
+
+	void shineLight(Position);
+
+	// src/trivial-solver.cpp
+	void trivialSolve();
 };
 // src/level.cpp

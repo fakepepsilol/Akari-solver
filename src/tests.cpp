@@ -23,7 +23,7 @@ bool beginTests() {
 
 int  main() { return beginTests(); }
 bool _test_getNeighbors() {
-	printf("%s begin\n", "_test_getNeighbors");
+	printf("%s:\n", __func__);
 	struct subtest
 	{
 		Position    pos;
@@ -58,7 +58,7 @@ bool _test_getNeighbors() {
 	Test test   = {Level(grid, 6, 6), subtests};
 	for (int i = 0; i < subtests.size(); i++) {
 		printf("%d-%d -> ", testNumber, i);
-		if (test.level.getNeighbors(subtests[i].pos, subtests[i].targets)
+		if (test.level.getNeighborCnt(subtests[i].pos, subtests[i].targets)
 		    == subtests[i].expectedResult) {
 			printf("✅\n");
 		} else {
@@ -66,12 +66,11 @@ bool _test_getNeighbors() {
 			result = false;
 		}
 	}
-	printf("%s end\n", __func__);
 	testNumber++;
 	return result;
 }
 bool _test_fixEdge() {
-	printf("%s begin\n", __func__);
+	printf("%s:\n", __func__);
 	char* grid = new char[7 * 6 + 1]();
 	memset(grid, '3', 7 * 6);
 	Level level(grid, 7, 6);
@@ -86,7 +85,6 @@ bool _test_fixEdge() {
 	bool result = true;
 	if (memcmp(grid, expected, 7 * 6)) { result = false; }
 	printf("%d-0 -> %s\n", testNumber, (result ? "✅" : "❌"));
-	printf("%s end\n", __func__);
 	testNumber++;
 	return result;
 }

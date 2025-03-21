@@ -8,8 +8,9 @@ int main() {
 	std::string curl = runCurl(url);
 
 	Level level = CurlToLevel(curl);
+	printf("\n");
+	// level.print();
+	level.trivialSolve();
 	level.print();
-	printf("-> %d <-\n", level.getNeighbors({1, 1}, ".#"));
-
 	return 0;
 }

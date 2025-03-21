@@ -2,5 +2,7 @@
 cd build
 cmake ..
 make
+echo "-------------------------"
 ./tests
+echo "-------------------------"
 ./main
