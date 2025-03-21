@@ -1,6 +1,10 @@
 #include "level.h"
 
+#include "position.h"
+
 #include <cstdio>
+#include <cstring>
+#include <vector>
 
 Level::Level(char* grid, int x, int y) {
 	this->grid = grid;
@@ -27,3 +31,25 @@ void Level::fixEdge() {
 	}
 	memset(grid + x * (y - 1), '#', x);
 };
+int Level::getNeighbors(Position pos, const char* targets) {
+	std::vector<Position> offsets = {
+		{ 1,  0},
+		{-1,  0},
+		{ 0,  1},
+		{ 0, -1},
+	};
+
+	int ret = 0;
+
+	int charsLen = strlen(targets);
+	for (int i = 0; i < 4; i++) {
+		for (int c = 0; c < charsLen; c++) {
+			if (grid[(pos.y + offsets[i].y) * x + (pos.x + offsets[i].x)] == targets[c]) {
+				ret++;
+				break;
+			}
+		}
+	}
+
+	return ret;
+}

@@ -1,6 +1,7 @@
 #include "https.h"
 #include "js.h"
 
+#include <cstdio>
 #include <string>
 int main() {
 	std::string url  = inputUrl();
@@ -8,6 +9,7 @@ int main() {
 
 	Level level = CurlToLevel(curl);
 	level.print();
+	printf("-> %d <-\n", level.getNeighbors({1, 1}, ".#"));
 
 	return 0;
 }

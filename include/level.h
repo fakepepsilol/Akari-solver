@@ -1,5 +1,6 @@
 #pragma once
-#include <cstring>
+#include "position.h"
+
 class Level {
 public:
 	Level(char* grid, int x, int y);
@@ -10,4 +11,7 @@ public:
 	char* grid;
 	void  print(bool noDots = false);
 	void  fixEdge();
+	int   getNeighbors(Position, const char* targets);
+	void  trivialSolve();
 };
+// src/level.cpp

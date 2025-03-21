@@ -14,9 +14,13 @@ target_include_directories(https PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(js PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 add_executable(main src/main.cpp)
+add_executable(tests src/tests.cpp)
 
 target_link_libraries(main PRIVATE
   level
   https
   js)
-
+target_link_libraries(tests PRIVATE
+  level
+  https
+  js)
