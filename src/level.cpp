@@ -22,7 +22,8 @@ void Level::print(bool noDots) {
 			case '@': printf("\033[31m"); break;
 			case '+': printf("\033[32m"); break;
 			case '#': printf("\033[34m"); break;
-			case 'X': printf("\033[92m"); break;
+			case 'X': printf("\033[93m"); break;
+			case 'x': printf("\033[35m"); break;
 			}
 			printf("%c", noDots ? ((grid[i] == '.') ? ' ' : grid[i]) : grid[i]);
 			printf("\033[0m ");
@@ -117,5 +118,11 @@ exit_loop:
 				}
 			}
 		}
+	}
+}
+void Level::setTileAsSolved(Position pos) {
+	grid[pos.y * x + pos.x] = 'X';
+	for (Position neighbor : getNeighbors(pos, ".")) {
+		grid[neighbor.y * x + neighbor.x] = 'x';
 	}
 }
