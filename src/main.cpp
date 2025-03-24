@@ -11,6 +11,11 @@ int main() {
 	printf("\n");
 	// level.print();
 	level.trivialSolve();
+	if (level.isSolved()) {
+		level.print();
+		printf("Solved!\n");
+		return 0;
+	}
 	level.print();
 	return 0;
 }

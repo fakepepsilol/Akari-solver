@@ -69,3 +69,13 @@ void Level::trivialSolve() {
 		}
 	}
 }
+bool Level::isSolved() {
+	char tile;
+	for (int X = 0; X <= x; X++) {
+		for (int Y = 0; Y <= y; Y++) {
+			tile = grid[Y * x + X];
+			if (tile == '.' || tile == 'x' || (tile >= '0' && tile <= '4')) { return false; }
+		}
+	}
+	return true;
+}

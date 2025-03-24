@@ -12,6 +12,7 @@ public:
 
 	// src/trivial-solver.cpp
 	void trivialSolve();
+	bool isSolved();
 
 private:
 	// if you have to access these, you're
