@@ -126,3 +126,46 @@ void Level::setTileAsSolved(Position pos) {
 		grid[neighbor.y * x + neighbor.x] = 'x';
 	}
 }
+
+Positions Level::getVisible(Position pos, const char* targets, const char* stopChars) {
+	Positions ret;
+	int       state = 0;
+	int       index = 0;
+	int       i     = 0;
+
+	int   len      = strlen(targets) + strlen(stopChars) + 2;
+	char* allChars = new char[len]();
+	strcpy(allChars, targets);
+	strcat(allChars, stopChars);
+	allChars[len - 2] = '#';
+
+	// grid[pos.y * x + pos.x] = '@';
+
+exit_loop:
+	while (state != 4) {
+		i = (!(state % 2) ? pos.x : pos.y);
+		for (;; ((state < 2) ? i++ : i--)) {
+			// Y * x + X
+			int X = ((state % 2) ? pos.x : i);
+			int Y = ((state % 2) ? i : pos.y);
+			if (Position{X, Y} == pos) { continue; }
+			index = Y * x + X;
+			for (int chr = 0; chr < len; chr++) {
+				if ((!(state % 2) ? (i < 0 || i >= x) : (i < 0 || i >= y))) {
+					state++;
+					goto exit_loop;
+				}
+				if (grid[index] == allChars[chr]) {
+					if (chr < strlen(targets)) {
+						ret.push_back({X, Y});
+						// grid[index] = '+';
+					} else {
+						state++;
+						goto exit_loop;
+					}
+				}
+			}
+		}
+	}
+	return ret;
+}
