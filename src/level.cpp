@@ -7,13 +7,23 @@
 #include <vector>
 
 Level::Level(char* grid, int x, int y) {
-	this->grid = grid;
 	this->x    = x;
 	this->y    = y;
+	this->grid = grid;
 };
-Level::Level(int x, int y) { char* _grid = new char[(x + 2) * (y + 2) + 1](); };
+Level::Level(int x, int y) {
+	this->x    = x;
+	this->y    = y;
+	this->grid = new char[(x + 2) * (y + 2) + 1]();
+};
+Level::Level(const Level& source) {
+	x    = source.x;
+	y    = source.y;
+	grid = new char[(x + 2) * (y + 2) + 1]();
+	memcpy(grid, source.grid, (x + 2) * (y + 2));
+}
 
-void Level::print(bool noDots) {
+void Level::print(bool noDots) const {
 	int i;
 	for (int Y = 0; Y < y; Y++) {
 		for (int X = 0; X < x; X++) {

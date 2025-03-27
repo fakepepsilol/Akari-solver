@@ -1,14 +1,14 @@
 #pragma once
 #include "position.h"
 #include "tests.h"
-
 class Level {
 public:
 	Level(char* grid, int x, int y);
 	Level(int x, int y);
+	Level(const Level&);
 
 	// src/level.cpp
-	void print(bool noDots = false);
+	void print(bool noDots = false) const;
 
 	// src/trivial-solver.cpp
 	void trivialSolve();
@@ -52,5 +52,6 @@ private:
 	friend bool Tests::_test_getNeighbors();
 	friend bool Tests::_test_getNeighborCnt();
 	friend bool Tests::_test_getVisible();
+	friend bool isValidMove(const Level&, Position);
 };
 // src/level.cpp

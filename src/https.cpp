@@ -1,6 +1,7 @@
+#include "https.h"
+
 #include <iostream>
 #include <string>
-
 std::string pathFromUrl(std::string url);
 std::string inputUrl(int argc, char *argv[]) {
 	std::string input;
