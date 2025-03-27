@@ -10,8 +10,8 @@ void Level::trivialSolve() {
 	bool changed   = true;
 	while (changed) {
 		changed = false;
-		for (int X = 0; X < x; X++) {
-			for (int Y = 0; Y < y; Y++) {
+		for (int X = 1; X < x - 1; X++) {
+			for (int Y = 1; Y < y - 1; Y++) {
 				index              = Y * x + X;
 				char*    tilePtr   = &grid[index];
 				char     tile      = *tilePtr;
@@ -33,7 +33,16 @@ void Level::trivialSolve() {
 						continue;
 					}
 				}
+				if (tile != 'x' && tile != 'X' && (tile < '0' || tile > '4') && tile != 'B') {
+					// TEST
 
+					if (!isValidMove(*this, pos)) {
+						grid[Y * x + X] = 'x';
+						changed         = true;
+					}
+
+					// TEST
+				}
 				if (tileValue < 0 || tileValue > 4) { continue; }
 
 				// number of neighboring lightbulbs
@@ -106,13 +115,13 @@ bool isValidMove(const Level& originalLevel, Position pos) {
 	int   index;
 	char* grid = newLevel.grid;
 
-	for (int X = 1; X < newLevel.x; X++) {
-		for (int Y = 1; Y < newLevel.y; Y++) {
+	for (int X = 1; X < newLevel.x - 1; X++) {
+		for (int Y = 1; Y < newLevel.y - 1; Y++) {
 			index = Y * newLevel.x + X;
 			if (grid[index] < '0' || grid[index] > '4') { continue; }
 			if ((grid[index] - '0' - newLevel.getNeighborCnt({X, Y}, "@"))
 			    > newLevel.getNeighborCnt({X, Y}, ".")) {
-				printf("------- (%d, %d) returning false because of: (%d, %d)\n", pos.x, pos.y, X, Y);
+				// printf("------- (%d, %d) returning false because of: (%d, %d)\n", pos.x, pos.y, X, Y);
 				return false;
 			}
 		}

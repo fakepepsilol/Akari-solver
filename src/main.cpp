@@ -11,9 +11,11 @@ int main(int argc, char* argv[]) {
 	level.trivialSolve();
 	if (level.isSolved()) {
 		level.print();
-		printf("Solved!\n");
+		printf("Solved!\n\n");
 		return 0;
 	}
 	level.print();
+	printf("Failed.\n\n");
+	// level.print();
 	return 0;
 }
