@@ -2,10 +2,14 @@
 #include <string>
 
 std::string pathFromUrl(std::string url);
-std::string inputUrl() {
-	std::cout << "> ";
+std::string inputUrl(int argc, char *argv[]) {
 	std::string input;
-	std::cin >> input;
+	if (argc > 1) {
+		input = argv[1];
+	} else {
+		std::cout << "> ";
+		std::cin >> input;
+	}
 
 	return pathFromUrl(input);
 }

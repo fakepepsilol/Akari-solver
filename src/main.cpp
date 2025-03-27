@@ -3,13 +3,11 @@
 
 #include <cstdio>
 #include <string>
-int main() {
-	std::string url  = inputUrl();
+int main(int argc, char* argv[]) {
+	std::string url  = inputUrl(argc, argv);
 	std::string curl = runCurl(url);
 
 	Level level = CurlToLevel(curl);
-	printf("\n");
-	// level.print();
 	level.trivialSolve();
 	if (level.isSolved()) {
 		level.print();
