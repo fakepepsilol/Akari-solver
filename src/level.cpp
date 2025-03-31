@@ -28,6 +28,7 @@ void Level::print(bool noDots) const {
 	for (int Y = 0; Y < y; Y++) {
 		for (int X = 0; X < x; X++) {
 			i = Y * x + X;
+#ifndef _WIN32
 			switch (grid[i]) {
 			case '@': printf("\033[31m"); break;
 			case '+': printf("\033[32m"); break;
@@ -37,6 +38,9 @@ void Level::print(bool noDots) const {
 			}
 			printf("%c", noDots ? ((grid[i] == '.') ? ' ' : grid[i]) : grid[i]);
 			printf("\033[0m ");
+#else  // cmd doesn't support ANSI colors, skill issue
+			printf("%c ", noDots ? ((grid[i] == '.') ? ' ' : grid[i]) : grid[i]);
+#endif
 		}
 		printf("\n");
 	}

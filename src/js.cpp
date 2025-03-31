@@ -5,7 +5,6 @@
 #include <iostream>
 #include <string>
 
-// #include <sstream>
 // inline int _stoi(std::string in) {
 // 	int                ret;
 // 	std::istringstream ss(in);
@@ -18,14 +17,6 @@ Level CurlToLevel(std::string in) {
 		exit(1);
 	}
 	in = in.substr(in.find("ggSDK.embed("));
-	in = in.substr(0, in.find('\n') - 3);
-	// for (int i = in.length() - 2; i > 0; i--) {
-	// 	if (in[i] == '\'') {
-	// 		in = in.substr(i);
-	// 		break;
-	// 	}
-	// }
-
 
 	std::string xStr;
 	std::string yStr;
@@ -58,8 +49,7 @@ Level CurlToLevel(std::string in) {
 
 	int x = std::__cxx11::stoi(xStr);
 	int y = std::__cxx11::stoi(yStr);
-	// printf("%d, %d", x, y);
-	in = in.substr(0, x * y);
+	in    = in.substr(0, x * y);
 
 	int   gridSize = (x + 2) * (y + 2);
 	char* grid     = new char[gridSize + 1]();
