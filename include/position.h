@@ -18,4 +18,13 @@ struct Position
 	inline bool operator<=(const Position& cmp) const { return !(cmp < *this); }
 	inline bool operator>=(const Position& cmp) const { return !(*this < cmp); }
 };
-typedef std::vector<Position> Positions;
+
+typedef std::vector<Position> Positions;  // multiple positions (x, y)
+
+
+struct ChoicesPerTile
+{
+	std::vector<Positions> choices;
+	Position               tilePosition;
+};  // choices for a single tile
+typedef std::vector<ChoicesPerTile> Choices;  // all choices / all tiles

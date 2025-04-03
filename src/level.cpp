@@ -76,26 +76,27 @@ Positions Level::getNeighbors(Position pos, const char* targets) {
 	return ret;
 }
 int Level::getNeighborCnt(Position pos, const char* targets) {
-	std::vector<Position> offsets = {
-		{ 1,  0},
-		{-1,  0},
-		{ 0,  1},
-		{ 0, -1},
-	};
-
-	int ret = 0;
-
-	int charsLen = strlen(targets);
-	for (int i = 0; i < 4; i++) {
-		for (int c = 0; c < charsLen; c++) {
-			if (grid[(pos.y + offsets[i].y) * x + (pos.x + offsets[i].x)] == targets[c]) {
-				ret++;
-				break;
-			}
-		}
-	}
-
-	return ret;
+	return getNeighbors(pos, targets).size();
+	// std::vector<Position> offsets = {
+	// 	{ 1,  0},
+	// 	{-1,  0},
+	// 	{ 0,  1},
+	// 	{ 0, -1},
+	// };
+	//
+	// int ret = 0;
+	//
+	// int charsLen = strlen(targets);
+	// for (int i = 0; i < 4; i++) {
+	// 	for (int c = 0; c < charsLen; c++) {
+	// 		if (grid[(pos.y + offsets[i].y) * x + (pos.x + offsets[i].x)] == targets[c]) {
+	// 			ret++;
+	// 			break;
+	// 		}
+	// 	}
+	// }
+	//
+	// return ret;
 }
 void Level::shineLight(Position pos) {
 	int state = 0;
@@ -110,7 +111,21 @@ void Level::shineLight(Position pos) {
 	strcpy(allChars, passChars);
 	strcat(allChars, stopChars);
 
-	grid[pos.y * x + pos.x] = '@';
+	grid[pos.y * x + pos.x]   = '@';
+	Positions neighborOffsets = {
+		{-1,  0},
+		{ 1,  0},
+		{ 0, -1},
+		{ 0,  1}
+  };
+	for (int i = 0; i < 4; i++) {
+		Position tempPos   = {pos.x + neighborOffsets[i].x, pos.y + neighborOffsets[i].y};
+		char     tile      = grid[tempPos.y * x + tempPos.x];
+		int      tileValue = tile - '0';
+		if (tile >= '0' && tile <= '4') {
+			if (getNeighborCnt(tempPos, "@") == tileValue) { setTileAsSolved(tempPos); }
+		}
+	}
 
 exit_loop:
 	while (state != 4) {
@@ -182,4 +197,25 @@ exit_loop:
 		}
 	}
 	return ret;
+}
+bool Level::isValidMove(Position pos) {
+
+	Level newLevel = Level(*this);
+	newLevel.shineLight(pos);
+
+	for (int X = 1; X < x - 1; X++) {
+		for (int Y = 1; Y < y - 1; Y++) {
+			char tile = newLevel.grid[Y * x + X];
+			if (tile >= '0' && tile <= '4') {
+				int tileValue = tile - '0';
+				if ((tileValue - newLevel.getNeighborCnt({X, Y}, "@"))
+				    > newLevel.getNeighborCnt({X, Y}, ".")) {
+					return false;
+				}
+			}
+			if (tile == 'x' && (newLevel.getVisible({X, Y}, ".").size() == 0)) { return false; }
+		}
+	}
+
+	return true;
 }

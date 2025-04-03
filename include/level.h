@@ -1,6 +1,7 @@
 #pragma once
 #include "position.h"
 #include "tests.h"
+
 class Level {
 public:
 	Level(char* grid, int x, int y);
@@ -12,6 +13,7 @@ public:
 
 	// src/trivial-solver.cpp
 	void trivialSolve();
+	void backtrackSolve();
 	bool isSolved();
 
 private:
@@ -31,8 +33,14 @@ private:
 	void shineLight(Position);       // SE - don't even attempt to understand this
 	void setTileAsSolved(Position);  // SE
 
+	// src/level.cpp
+	bool isValidMove(Position);
+
 
 	int getNeighborCnt(Position, const char* targets);  // SE
+
+	// src/backtracker.cpp
+	int getNumFreeTiles();
 
 	// returns positions of neighbors that match
 	// at least one character from 'targets'
@@ -47,11 +55,31 @@ private:
 	// direction.
 	Positions getVisible(Position, const char* targets, const char* stopChars = "B@01234X#");
 
+	// returns a vector of the 'Positions' type,
+	// meaning valid choices for bulb placements
+	// example: a tile (x: 2, y: 2) needs 2 bulbs,
+	// but has all 4 empty neighbors:
+	// returns:
+	// {
+	// combination 1: {bulb1: (2, 1), bulb2: (3, 2)},
+	// combination 2: {bulb1: (3, 2), bulb2: (2, 3)},
+	// ...
+	// }
+	// (basically n-Choose-k but with Positions)
+	// src/backtracker.cpp
+	ChoicesPerTile getChoicesPerTile(Position pos);
+
+	// returns a vector of return values from
+	// getCombinationsForTile for the level
+	Choices getChoices();
+
+
 	// grant test functions access to the private fields and methods
 	friend bool Tests::_test_fixEdge();
 	friend bool Tests::_test_getNeighbors();
 	friend bool Tests::_test_getNeighborCnt();
 	friend bool Tests::_test_getVisible();
-	friend bool isValidMove(const Level&, Position);
+	friend bool Tests::_test_getCombinationsForTile();
+	friend bool _isValidMove(const Level&, Position);
 };
 // src/level.cpp

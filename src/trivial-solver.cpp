@@ -2,7 +2,7 @@
 #include "position.h"
 
 #include <cstdio>
-bool isValidMove(const Level& level, Position pos);
+bool _isValidMove(const Level& level, Position pos);
 
 void Level::trivialSolve() {
 	int  index;
@@ -36,7 +36,7 @@ void Level::trivialSolve() {
 				if (tile != 'x' && tile != 'X' && (tile < '0' || tile > '4') && tile != 'B') {
 					// TEST
 
-					if (!isValidMove(*this, pos)) {
+					if (!isValidMove(pos)) {
 						grid[Y * x + X] = 'x';
 						changed         = true;
 					}
@@ -76,7 +76,7 @@ void Level::trivialSolve() {
 					// print();
 					Positions freeNeighbors = getNeighbors(pos, ".");
 					for (Position fNpos : freeNeighbors) {
-						if (!isValidMove(*this, fNpos)) {
+						if (!isValidMove(fNpos)) {
 							grid[fNpos.y * x + fNpos.x] = 'x';
 							freeSpaceCnt--;
 							changed = true;
@@ -109,7 +109,7 @@ bool Level::isSolved() {
 
 	return true;
 }
-bool isValidMove(const Level& originalLevel, Position pos) {
+bool _isValidMove(const Level& originalLevel, Position pos) {
 	Level newLevel = Level(originalLevel);
 	newLevel.shineLight(pos);
 	int   index;

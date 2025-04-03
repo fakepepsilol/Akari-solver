@@ -1,10 +1,12 @@
+#include "tests.h"
+
 #include "level.h"
 #include "position.h"
 
 #include <cstdio>
-// #include <utility>
 #include <cstring>
 #include <set>
+#include <unordered_map>
 #include <vector>
 #define COLOR_R 31
 #define COLOR_G 32
@@ -12,20 +14,41 @@
 int colors[2] = {COLOR_R, COLOR_G};
 
 namespace Tests {
-	bool _test_getNeighbors();
-	bool _test_getVisible();
-	bool _test_fixEdge();
-	bool _test_positionOverloads();
 
-	int  testNumber = 1;
+
+	// bool _test_getNeighbors();
+	// bool _test_getVisible();
+	// bool _test_fixEdge();
+	// bool _test_positionOverloads();
+	// bool _test_getCombinationsForTile();
+
+
+	int testNumber = 1;
+
+	std::unordered_map<int, int> testNumbers;
+
+	void printTestResult(bool testResult) {
+		printf("\033[%dm%d-%d\033[0m\n", colors[testResult], testNumber, testNumbers[testNumber]);
+		testNumbers[testNumber]++;
+	}
+
+
 	bool beginTests() {
-		bool status = true;
-
-		status &= _test_getNeighbors();
-		status &= _test_fixEdge();
-		status &= _test_positionOverloads();
-		status &= _test_getVisible();
-
+		bool (*tests[])() = {_test_fixEdge,
+		                     _test_getVisible,
+		                     _test_getNeighbors,
+		                     _test_positionOverloads,
+		                     _test_getCombinationsForTile};
+		bool status       = true;
+		for (bool (*fn)() : tests) {
+			status &= fn();
+			testNumber++;
+		}
+		// status &= _test_getNeighbors();
+		// status &= _test_fixEdge();
+		// status &= _test_positionOverloads();
+		// status &= _test_getVisible();
+		// status &= _test_getCombinationsForTile();
 
 		return status;
 	}
@@ -62,16 +85,16 @@ namespace Tests {
 			{{1, 1},  "#", 2},
 		};
 
-		bool result = true;
-		Test test   = {Level(grid, 6, 6), subtests};
+		bool ret  = true;
+		Test test = {Level(grid, 6, 6), subtests};
 		for (int i = 0; i < subtests.size(); i++) {
-			bool temp = test.level.getNeighborCnt(subtests[i].pos, subtests[i].targets)
-			         == subtests[i].expectedResult;
-			printf("\033[%dm%d-%d\033[0m\n", colors[temp], testNumber, i);
-			if (!temp) { result = false; }
+			bool result = test.level.getNeighborCnt(subtests[i].pos, subtests[i].targets)
+			           == subtests[i].expectedResult;
+			printTestResult(result);
+			// printf("\033[%dm%d-%d\033[0m\n", colors[temp], testNumber, i);
+			if (!result) { ret = false; }
 		}
-		testNumber++;
-		return result;
+		return ret;
 	}
 
 
@@ -81,7 +104,6 @@ namespace Tests {
 	}  // thanks chatgpt
 	bool _test_getVisible() {
 		printf("%s:\n", __func__);
-		bool result = true;
 		struct subtest
 		{
 			Position    pos;
@@ -112,23 +134,24 @@ namespace Tests {
 			{{1, 1},  "#", {{1, 0}, {0, 1}}},
 		};
 
+		bool ret  = true;
 		Test test = {Level(grid, 7, 6), subtests};
 		for (int i = 0; i < subtests.size(); i++) {
-			bool temp = vectorsMatch(test.level.getVisible(subtests[i].pos, subtests[i].targets),
-			                         subtests[i].expectedResult);
-			printf("\033[%dm%d-%d\033[0m ", colors[temp], testNumber, i);
-			if (!temp) {
+			bool result = vectorsMatch(test.level.getVisible(subtests[i].pos, subtests[i].targets),
+			                           subtests[i].expectedResult);
+			// printf("\033[%dm%d-%d\033[0m ", colors[result], testNumber, i);
+			printTestResult(result);
+			if (!result) {
 				for (Position pos : test.level.getVisible(subtests[i].pos, subtests[i].targets)) {
 					printf("(%d, %d), ", pos.x, pos.y);
 				}
 				printf("\b\b ");
-				result = false;
+				ret = false;
+				printf("\n");
 			}
-			printf("\n");
 		}
-		testNumber++;
 
-		return result;
+		return ret;
 	}
 	bool _test_fixEdge() {
 		printf("%s:\n", __func__);
@@ -148,7 +171,6 @@ namespace Tests {
 		// returns 0 when the same
 		if (memcmp(grid, expected, 7 * 6)) { result = false; }
 		printf("\033[%dm%d-0\033[0m\n", colors[result], testNumber);
-		testNumber++;
 		return result;
 	}
 	bool _test_positionOverloads() {
@@ -158,14 +180,37 @@ namespace Tests {
 		if (p1 == p2) { result = false; }
 		if (p2 == p3) { result = false; }
 		if (p1 != p3) { result = false; }
-		printf("\033[%dm%d-0\033[0m\n", colors[result], /* (result ? COLOR_G : COLOR_R), */ testNumber);
+		printTestResult(result);
 		bool result2 = true;
-		if (p1 > p2) { result = false; }
-		if (p1 < p3) { result = false; }
-		if (p1 >= p2) { result = false; }
-		printf("\033[%dm%d-1\033[0m\n", colors[result2], testNumber);
-		testNumber++;
+		if (p1 > p2) { result2 = false; }
+		if (p1 < p3) { result2 = false; }
+		if (p1 >= p2) { result2 = false; }
+		printTestResult(result2);
 		return result & result2;
+	}
+	bool _test_getCombinationsForTile() {
+		// printf("%s:\n", __func__);
+		bool result = true;
+		// const char* grid =
+		// 		"#####"
+		// 		"#...#"
+		// 		"#.2.#"
+		// 		"#...#"
+		// 		"#####";
+		// Level        temp  = Level(const_cast<char*>(grid), 5, 5);
+		// Combinations retrn = temp.getCombinationsForTile({2, 2});
+		//   Combinations expected = {{{2, 1}, {3, 2}}, {{2, 1}, {2, 3}}, {{2, 1},{1, 2}}, {{3, 2},{1,
+		//   2}}, {{2, 3},{1, 2}}}; printTestResult(vectorsMatch(retrn, expected));
+		// for (Positions poss : retrn) {
+		// 	printf("{");
+		// 	for (Position pos : poss) {
+		// 		printf("(%d, %d), ", pos.x, pos.y);
+		// 	}
+		// 	printf("\b\b}, ");
+		// }
+		// printf("\b\b ");
+		//
+		return result;
 	}
 }  // namespace Tests
 int main() { return Tests::beginTests(); }

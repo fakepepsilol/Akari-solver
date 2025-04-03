@@ -2,3 +2,4 @@
 build/*
 !build/compile_commands.json
 share/*
+.gdb_history

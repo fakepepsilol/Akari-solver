@@ -8,7 +8,9 @@ int main(int argc, char* argv[]) {
 	std::string curl = runCurl(url);
 
 	Level level = CurlToLevel(curl);
+	level.print(true);
 	level.trivialSolve();
+	// level.backtrackSolve();
 	if (level.isSolved()) {
 		level.print();
 		printf("Solved!\n\n");
