@@ -15,6 +15,7 @@ cat ../src/level.cpp >> main.cpp
 cat ../src/js.cpp >> main.cpp
 cat ../src/https.cpp >> main.cpp
 cat ../src/trivial-solver.cpp >> main.cpp
+cat ../src/backtracker.cpp >> main.cpp
 cat ../src/main.cpp >> main.cpp
 
 
