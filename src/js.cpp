@@ -21,6 +21,9 @@ Level CurlToLevel(std::string in) {
 	std::string xStr;
 	std::string yStr;
 
+	in = in.substr(0, in.find("\n"));  // for the goofy ahh format
+
+
 	bool first = true;
 	in         = in.substr(in.find("sx: ") + 4);
 	for (int i = 0; i < in.length() - 1; i++) {
@@ -34,9 +37,11 @@ Level CurlToLevel(std::string in) {
 	}
 
 	in = in.substr(in.find("'") + 1);
-	if (in.find("|") != -1) {
+	if (in.find("|") != std::string::npos) {
+		// printf("normal ahh format: | at %ld\n", in.find("|"));
 		in = in.substr(xStr.length() + yStr.length() + 2);
 	} else {
+		// printf("goofy ahh format\n");
 		for (int i = 0; i < in.length() - 1; i++) {
 			switch (in[i]) {
 			case '*': in[i] = '@'; break;
