@@ -32,9 +32,10 @@ private:
 	void fixEdge();                  // SE
 	void shineLight(Position);       // SE - don't even attempt to understand this
 	void setTileAsSolved(Position);  // SE
+	void backtracker(Choices& choices, int depth);
 
 	// src/level.cpp
-	bool isValidMove(Position);
+	bool isValidMove(Position pos, bool quick = false);
 
 
 	int getNeighborCnt(Position, const char* targets);  // SE

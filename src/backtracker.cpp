@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstring>
 #include <vector>
 
 int factorial(int n) {
@@ -40,7 +41,7 @@ ChoicesPerTile Level::getChoicesPerTile(Position pos) {
 		}
 		ret.choices.push_back(subset);
 	} while (std::prev_permutation(bitmask.begin(), bitmask.end()));
-	printf("returning ret.size() -> %ld\n", ret.choices.size());
+	// printf("returning ret.size() -> %ld\n", ret.choices.size());
 	ret.tilePosition = pos;
 	return ret;
 }
@@ -69,34 +70,82 @@ int Level::getNumFreeTiles() {
 	return ret;
 }
 Level* lowestLvl;
-void   Level::backtrackSolve() {
-  printf("backtrack solver --- ");
-  Choices choices = getChoices();
-  printf("choice count: %ld\n", choices.size());
-  for (ChoicesPerTile comb : choices) {
-    for (Positions poss : comb.choices) {
-      printf("{");
-      Level newLevel = Level(*this);
-      for (Position pos : poss) {
-        if (!newLevel.isValidMove(pos)) {
-          printf("invalid choice for tile\n");
-          break;
-        }
-        newLevel.shineLight(pos);
-        // newLevel.setTileAsSolved(comb.tilePosition);
-        if (!lowestLvl) {
-          lowestLvl = &newLevel;
-        } else {
-          lowestLvl =
-              (newLevel.getNumFreeTiles() < lowestLvl->getNumFreeTiles() ? &newLevel : lowestLvl);
-        }
-        newLevel.trivialSolve();
-        newLevel.print();
-        printf("(%d, %d), ", pos.x, pos.y);
-      }
-      printf("\b\b}, ");
-    }
-    printf("\b\b \n");
-  }
-  if (lowestLvl) { lowestLvl->print(); }
+
+void Level::backtracker(Choices& choices, int depth = 0) {
+	if (depth == choices.size()) { return; }
+	// printf("\n%d: ", depth);
+	for (Positions poss : choices[depth].choices) {
+		Level newLevel = Level(*this);
+		bool  failed   = false;
+		for (Position pos : poss) {
+			if (newLevel.isValidMove(pos)) {
+				newLevel.shineLight(pos);
+			} else {
+				goto failed;
+			}
+			// printf("%d|%d->(%d, %d), ",
+			//        choices[depth].tilePosition.x,
+			//        choices[depth].tilePosition.y,
+			//        pos.x,
+			//        pos.y);
+		}
+		newLevel.trivialSolve();
+		newLevel.backtracker(choices, depth + 1);
+		if (newLevel.isSolved()) { memcpy(grid, newLevel.grid, x * y); }
+	failed:
+		continue;
+	}
+}
+
+void Level::backtrackSolve() {
+	printf("backtrack solver --- ");
+	Choices choices = getChoices();
+	printf("choice count: %ld\n", choices.size());
+	backtracker(choices);
+	// ChoicesPerTile cpt = choices[depth];
+	// for (ChoicesPerTile cpt : choices) {
+	//   printf("For tile: %d, %d -> {", cpt.tilePosition.x, cpt.tilePosition.y);
+	//   for (Positions poss : cpt.choices) {
+	//     for (Position pos : poss) {
+	//       printf("(%d, %d), ", pos.x, pos.y);
+	//     }
+	//   }
+	//   printf("\b\b}\n");
+	// }
+	return;
+
+
+	for (ChoicesPerTile comb : choices) {
+		for (Positions poss : comb.choices) {
+			// printf("{");
+			Level newLevel = Level(*this);
+			for (Position pos : poss) {
+				if (!newLevel.isValidMove(pos)) {
+					// printf("invalid choice for tile\n");
+					break;
+				}
+				newLevel.shineLight(pos);
+				printf("(%d, %d), ", pos.x, pos.y);
+				// newLevel.setTileAsSolved(comb.tilePosition);
+
+				newLevel.trivialSolve();
+				if (newLevel.isSolved()) {
+					memcpy(grid, newLevel.grid, x * y);
+					// newLevel.print();
+					return;
+				}
+				// printf("(%d, %d), ", pos.x, pos.y);
+			}
+			if (!lowestLvl) {
+				lowestLvl = &newLevel;
+			} else {
+				lowestLvl =
+						(newLevel.getNumFreeTiles() < lowestLvl->getNumFreeTiles() ? &newLevel : lowestLvl);
+			}
+			printf("\n");
+			// printf("\b\b}, ");
+		}
+		// printf("\b\b \n");
+	}
+	if (lowestLvl) { lowestLvl->print(); }
 }

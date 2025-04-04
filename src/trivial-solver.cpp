@@ -33,7 +33,8 @@ void Level::trivialSolve() {
 						continue;
 					}
 				}
-				if (tile != 'x' && tile != 'X' && (tile < '0' || tile > '4') && tile != 'B') {
+				if (tile != 'x' && tile != 'X' && tile != '+' && (tile < '0' || tile > '4')
+				    && tile != 'B') {
 					// TEST
 
 					if (!isValidMove(pos)) {
@@ -98,17 +99,17 @@ void Level::trivialSolve() {
 	}
 	// isValidMove(*this, {1, 1});
 }
-bool Level::isSolved() {
-	char tile;
-	for (int X = 1; X < x; X++) {
-		for (int Y = 1; Y < y; Y++) {
-			tile = grid[Y * x + X];
-			if (tile == '.' || tile == 'x' || (tile >= '0' && tile <= '4')) { return false; }
-		}
-	}
-
-	return true;
-}
+// bool Level::isSolved() {
+// 	char tile;
+// 	for (int X = 1; X < x; X++) {
+// 		for (int Y = 1; Y < y; Y++) {
+// 			tile = grid[Y * x + X];
+// 			if (tile == '.' || tile == 'x' || (tile >= '0' && tile <= '4')) { return false; }
+// 		}
+// 	}
+//
+// 	return true;
+// }
 bool _isValidMove(const Level& originalLevel, Position pos) {
 	Level newLevel = Level(originalLevel);
 	newLevel.shineLight(pos);

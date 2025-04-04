@@ -99,10 +99,10 @@ int Level::getNeighborCnt(Position pos, const char* targets) {
 	// return ret;
 }
 void Level::shineLight(Position pos) {
-	int state = 0;
-	int index = 0;
-	int i     = 0;
-
+	if (!isValidMove(pos, true)) { return; }
+	int         state     = 0;
+	int         index     = 0;
+	int         i         = 0;
 	const char* passChars = ".+x";
 	const char* stopChars = "XB01234#";
 
@@ -198,8 +198,12 @@ exit_loop:
 	}
 	return ret;
 }
-bool Level::isValidMove(Position pos) {
-
+bool Level::isValidMove(Position pos, bool quick) {
+	int index = pos.y * x + pos.x;
+	if (grid[index] == '+' || grid[index] == 'x') { return false; }
+	if (getVisible(pos, "@").size() != 0) { return false; }
+	if (quick) { return true; }
+	// if (grid[index] != '.') { return false; }
 	Level newLevel = Level(*this);
 	newLevel.shineLight(pos);
 
@@ -217,5 +221,20 @@ bool Level::isValidMove(Position pos) {
 		}
 	}
 
+	return true;
+}
+bool Level::isSolved() {
+	char tile;
+	int  tileValue;
+	for (int X = 1; X < x - 1; X++) {
+		for (int Y = 1; Y < y - 1; Y++) {
+			tile      = grid[Y * x + X];
+			tileValue = tile - '0';
+			if (tile >= '0' && tile <= '4') {
+				if (tileValue != getNeighborCnt({X, Y}, "@")) { return false; }
+			}
+			if (tile == 'x' || tile == '.') { return false; }
+		}
+	}
 	return true;
 }
