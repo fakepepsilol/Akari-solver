@@ -2,8 +2,10 @@
 #include "position.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
+#include <set>
 #include <vector>
 
 int factorial(int n) {
@@ -57,7 +59,6 @@ Choices Level::getChoices() {
 
 	return ret;
 }
-
 int Level::getNumFreeTiles() {
 	int ret;
 
@@ -71,8 +72,38 @@ int Level::getNumFreeTiles() {
 }
 Level* lowestLvl;
 
+struct emptyWithCnt
+{
+	Position pos;
+	size_t   numEmpty;
+	bool     operator<(const emptyWithCnt& other) const { return this->numEmpty < other.numEmpty; }
+};
+bool Level::emptyBacktracker() {
+	std::set<emptyWithCnt> emptySpaces;
+	for (int X = 1; X < x - 1; X++) {
+		for (int Y = 1; Y < y - 1; Y++) {
+			if (grid[Y * x + X] != '.') { continue; }
+			emptySpaces.insert({
+				{X, Y},
+				getVisible({X, Y},
+        "x").size()
+      });
+			//
+		}
+	}
+	for (std::set<emptyWithCnt>::reverse_iterator it = emptySpaces.rbegin(); it != emptySpaces.rend();
+	     ++it) {
+		emptyWithCnt temp = *it;
+		if (grid[temp.pos.y * x + temp.pos.x] != '.') { continue; }
+		shineLight(temp.pos);
+	}
+	if (isSolved()) { return true; }
+	return false;
+}
+
 void Level::backtracker(Choices& choices, int depth = 0) {
 	if (depth == choices.size()) { return; }
+	// if (depth == 13) { print(); }
 	// printf("\n%d: ", depth);
 	for (Positions poss : choices[depth].choices) {
 		Level newLevel = Level(*this);
@@ -91,14 +122,18 @@ void Level::backtracker(Choices& choices, int depth = 0) {
 		}
 		newLevel.trivialSolve();
 		newLevel.backtracker(choices, depth + 1);
-		if (newLevel.isSolved()) { memcpy(grid, newLevel.grid, x * y); }
+		if (newLevel.isSolved()) {
+			memcpy(grid, newLevel.grid, x * y);
+		} else if (newLevel.emptyBacktracker()) {
+			memcpy(grid, newLevel.grid, x * y);
+		}
 	failed:
 		continue;
 	}
 }
 
 void Level::backtrackSolve() {
-	printf("backtrack solver --- ");
+	// printf("backtrack solver --- ");
 	Choices choices = getChoices();
 	printf("choice count: %ld\n", choices.size());
 	backtracker(choices);
@@ -113,39 +148,4 @@ void Level::backtrackSolve() {
 	//   printf("\b\b}\n");
 	// }
 	return;
-
-
-	for (ChoicesPerTile comb : choices) {
-		for (Positions poss : comb.choices) {
-			// printf("{");
-			Level newLevel = Level(*this);
-			for (Position pos : poss) {
-				if (!newLevel.isValidMove(pos)) {
-					// printf("invalid choice for tile\n");
-					break;
-				}
-				newLevel.shineLight(pos);
-				printf("(%d, %d), ", pos.x, pos.y);
-				// newLevel.setTileAsSolved(comb.tilePosition);
-
-				newLevel.trivialSolve();
-				if (newLevel.isSolved()) {
-					memcpy(grid, newLevel.grid, x * y);
-					// newLevel.print();
-					return;
-				}
-				// printf("(%d, %d), ", pos.x, pos.y);
-			}
-			if (!lowestLvl) {
-				lowestLvl = &newLevel;
-			} else {
-				lowestLvl =
-						(newLevel.getNumFreeTiles() < lowestLvl->getNumFreeTiles() ? &newLevel : lowestLvl);
-			}
-			printf("\n");
-			// printf("\b\b}, ");
-		}
-		// printf("\b\b \n");
-	}
-	if (lowestLvl) { lowestLvl->print(); }
 }

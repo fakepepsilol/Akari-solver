@@ -23,7 +23,8 @@ int main(int argc, char* argv[]) {
 	level.print();
 	if (level.isSolved()) {
 		printf("Solved!\n\n");
-		printf("-----\n%s\n-----", level.getSolveCommand().c_str());
+		printf("url: %s\n", url.c_str());
+		printf("-----\n%s\n-----\n", level.getSolveCommand().c_str());
 	} else {
 		printf("Failed!\n\n");
 	}

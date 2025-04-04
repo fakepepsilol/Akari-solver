@@ -39,6 +39,7 @@ private:
 
 	// src/level.cpp
 	bool isValidMove(Position pos, bool quick = false);
+	bool emptyBacktracker();
 
 
 	int getNeighborCnt(Position, const char* targets);  // SE
