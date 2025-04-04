@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <string>
 #include <vector>
 
 Level::Level(char* grid, int x, int y) {
@@ -44,6 +45,19 @@ void Level::print(bool noDots) const {
 		}
 		printf("\n");
 	}
+}
+std::string Level::getSolveCommand() {
+	std::string ret;
+	char        buffer[100];
+	for (int X = 1; X < x - 1; X++) {
+		for (int Y = 1; Y < y - 1; Y++) {
+			if (grid[Y * x + X] == '@') {
+				sprintf(buffer, "e.OnDownFunc({x: %d, y: %d}, \"a\"); ", X - 1, Y - 1);
+				ret += buffer;
+			}
+		}
+	}
+	return ret;
 }
 void Level::fixEdge() {
 	memset(grid, '#', x);
@@ -150,7 +164,9 @@ exit_loop:
 	}
 }
 void Level::setTileAsSolved(Position pos) {
-	grid[pos.y * x + pos.x] = 'X';
+	int index = pos.y * x + pos.x;
+	if (grid[index] - '0' != getNeighborCnt(pos, "@")) { return; }
+	grid[index] = 'X';
 	for (Position neighbor : getNeighbors(pos, ".")) {
 		grid[neighbor.y * x + neighbor.x] = 'x';
 	}

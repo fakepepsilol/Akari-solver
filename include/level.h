@@ -2,6 +2,8 @@
 #include "position.h"
 #include "tests.h"
 
+#include <string>
+
 class Level {
 public:
 	Level(char* grid, int x, int y);
@@ -12,9 +14,10 @@ public:
 	void print(bool noDots = false) const;
 
 	// src/trivial-solver.cpp
-	void trivialSolve();
-	void backtrackSolve();
-	bool isSolved();
+	void        trivialSolve();
+	void        backtrackSolve();
+	bool        isSolved();
+	std::string getSolveCommand();
 
 private:
 	// if you have to access these, you're
